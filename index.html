@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f5f7f4" />
+    <meta name="description" content="Prototipo web para organizar ingresos, gastos y presupuestos personales en guaraníes." />
+    <title>Mi bolsillo | Finanzas personales</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="Navegación principal">
+        <a class="brand" href="#inicio" data-nav="dashboard" aria-label="Mi bolsillo, inicio">
+          <span class="brand-mark" aria-hidden="true">₲</span>
+          <span class="brand-copy"><strong>mi bolsillo</strong><small>FINANZAS PERSONALES</small></span>
+        </a>
+        <div class="nav-label">MENÚ</div>
+        <nav class="primary-nav">
+          <button class="nav-item active" type="button" data-nav="dashboard" aria-current="page">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg>
+            <span>Inicio</span>
+          </button>
+          <button class="nav-item" type="button" data-nav="income">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5m0 0L6.5 10.5M12 5l5.5 5.5"/><path d="M4 19.5h16"/></svg>
+            <span>Ingresos</span>
+          </button>
+          <button class="nav-item" type="button" data-nav="expenses">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14m0 0 5.5-5.5M12 19l-5.5-5.5"/><path d="M4 4.5h16"/></svg>
+            <span>Gastos</span>
+          </button>
+          <button class="nav-item" type="button" data-nav="budgets">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5V5M4 19.5h16"/><path d="M7 15.5 11 11l3 2.5 5-6"/><path d="M16 7.5h3v3"/></svg>
+            <span>Presupuestos</span>
+          </button>
+          <button class="nav-item" type="button" data-nav="charts">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5V11h4v8.5M10 19.5V5h4v14.5M16 19.5v-6h4v6"/><path d="M3 20h18"/></svg>
+            <span>Gráficos</span>
+          </button>
+          <button class="nav-item" type="button" data-nav="history">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7.5h16M4 12h16M4 16.5h10"/><circle cx="3.5" cy="7.5" r=".5"/><circle cx="3.5" cy="12" r=".5"/><circle cx="3.5" cy="16.5" r=".5"/></svg>
+            <span>Historial</span>
+          </button>
+        </nav>
+        <div class="sidebar-note"><span class="note-dot"></span><span>Tu información se guarda en este navegador.</span></div>
+      </aside>
+
+      <main class="main-area">
+        <header class="topbar">
+          <div class="page-heading">
+            <p class="eyebrow" id="page-eyebrow">TU DINERO, EN ORDEN</p>
+            <h1 id="page-title">Inicio</h1>
+            <p class="page-subtitle" id="page-subtitle">Un resumen claro para tomar mejores decisiones.</p>
+          </div>
+          <div class="topbar-right">
+            <span class="today-chip"><span class="status-dot"></span> Prototipo local</span>
+            <button class="button button-primary top-action" id="header-action" type="button" hidden>
+              <span aria-hidden="true">＋</span><span id="header-action-label">Registrar</span>
+            </button>
+          </div>
+        </header>
+
+        <section class="page-view active" id="page-dashboard" aria-labelledby="page-title">
+          <div class="section-toolbar">
+            <div><h2>Tu resumen</h2><p>Consulta tus movimientos y cómo va tu mes.</p></div>
+            <label class="month-picker"><span>Mes</span><input id="dashboard-month" type="month" aria-label="Mes del resumen" /></label>
+          </div>
+
+          <div class="summary-grid">
+            <article class="summary-card income-card"><div class="summary-top"><span>Ingresos del mes</span><span class="metric-icon income-icon" aria-hidden="true">↗</span></div><strong id="summary-income">₲ 0</strong><small id="summary-income-count">0 movimientos</small></article>
+            <article class="summary-card expense-card"><div class="summary-top"><span>Gastos del mes</span><span class="metric-icon expense-icon" aria-hidden="true">↘</span></div><strong id="summary-expenses">₲ 0</strong><small id="summary-expense-count">0 movimientos</small></article>
+            <article class="summary-card balance-card"><div class="summary-top"><span>Saldo disponible</span><span class="metric-icon balance-icon" aria-hidden="true">₲</span></div><strong id="summary-balance">₲ 0</strong><small>Ingresos menos gastos registrados</small></article>
+            <article class="summary-card budget-card"><div class="summary-top"><span>Presupuestos del mes</span><span class="metric-icon budget-icon" aria-hidden="true">◎</span></div><strong id="summary-budget-count">0</strong><small id="summary-budget-caption">límites establecidos</small></article>
+          </div>
+
+          <div class="dashboard-grid">
+            <article class="panel chart-panel">
+              <div class="panel-heading"><div><h2>Ingresos y gastos</h2><p>Comparación de los últimos seis meses</p></div><button class="text-link" type="button" data-nav="charts">Ver gráficos <span aria-hidden="true">→</span></button></div>
+              <div class="chart-legend"><span><i class="legend-dot legend-income"></i>Ingresos</span><span><i class="legend-dot legend-expense"></i>Gastos</span></div>
+              <div class="chart-scroll"><svg id="dashboard-monthly-chart" class="monthly-chart" role="img" aria-label="Gráfico de ingresos y gastos por mes"></svg></div>
+            </article>
+            <article class="panel budgets-preview-panel">
+              <div class="panel-heading"><div><h2>Presupuestos</h2><p>Uso de tus límites este mes</p></div><button class="text-link" type="button" data-nav="budgets">Ver todos <span aria-hidden="true">→</span></button></div>
+              <div id="dashboard-budget-preview" class="budget-preview-list"></div>
+            </article>
+          </div>
+
+          <article class="panel recent-panel">
+            <div class="panel-heading"><div><h2>Movimientos recientes</h2><p>Lo último que registraste</p></div><button class="text-link" type="button" data-nav="history">Ir al historial <span aria-hidden="true">→</span></button></div>
+            <div id="dashboard-recent" class="table-wrap"></div>
+          </article>
+        </section>
+
+        <section class="page-view" id="page-income" aria-labelledby="page-title" hidden>
+          <div class="content-grid">
+            <article class="panel form-panel"><div class="panel-heading"><div><h2>Registrar ingreso</h2><p>Anota el dinero que recibiste.</p></div><span class="form-symbol income-symbol" aria-hidden="true">↗</span></div>
+              <form class="movement-form" data-movement-form="income">
+                <label>Descripción<input name="description" type="text" maxlength="80" placeholder="Ej.: salario mensual" required /></label>
+                <div class="form-row"><label>Monto en guaraníes<div class="amount-input"><span>₲</span><input name="amount" type="number" min="1" step="1" inputmode="numeric" placeholder="0" required /></div></label><label>Fecha<input name="date" type="date" required /></label></div>
+                <div class="form-row"><label>Categoría<select name="category" required><option value="">Seleccionar</option><option>Salario</option><option>Ventas</option><option>Servicios</option><option>Inversiones</option><option>Regalo</option><option>Otros</option></select></label><label>Medio de pago<select name="method" required><option value="">Seleccionar</option><option>Efectivo</option><option>Tarjeta</option><option>Transferencia</option></select></label></div>
+                <button class="button button-primary form-submit" type="submit">Guardar ingreso <span aria-hidden="true">→</span></button>
+              </form>
+            </article>
+            <article class="panel side-info-panel"><span class="info-illustration" aria-hidden="true">₲</span><h2>Registra lo que recibes</h2><p>Incluye salarios, ventas u otros ingresos para mantener actualizado tu saldo.</p><div class="info-tip"><strong>Consejo</strong><span>Usa una descripción breve y una categoría para encontrar cada movimiento fácilmente.</span></div></article>
+          </div>
+          <article class="panel list-panel"><div class="panel-heading"><div><h2>Ingresos registrados</h2><p>Todos tus ingresos, del más reciente al más antiguo.</p></div><span class="count-pill" id="income-total-count">0</span></div><div id="income-list" class="table-wrap"></div></article>
+        </section>
+
+        <section class="page-view" id="page-expenses" aria-labelledby="page-title" hidden>
+          <div class="content-grid">
+            <article class="panel form-panel"><div class="panel-heading"><div><h2>Registrar gasto</h2><p>Anota en qué utilizaste tu dinero.</p></div><span class="form-symbol expense-symbol" aria-hidden="true">↘</span></div>
+              <form class="movement-form" data-movement-form="expense">
+                <label>Descripción<input name="description" type="text" maxlength="80" placeholder="Ej.: compra del supermercado" required /></label>
+                <div class="form-row"><label>Monto en guaraníes<div class="amount-input"><span>₲</span><input name="amount" type="number" min="1" step="1" inputmode="numeric" placeholder="0" required /></div></label><label>Fecha<input name="date" type="date" required /></label></div>
+                <div class="form-row"><label>Categoría<select name="category" required><option value="">Seleccionar</option><option>Alimentación</option><option>Vivienda</option><option>Transporte</option><option>Salud</option><option>Educación</option><option>Servicios</option><option>Entretenimiento</option><option>Compras</option><option>Otros</option></select></label><label>Medio de pago<select name="method" required><option value="">Seleccionar</option><option>Efectivo</option><option>Tarjeta</option><option>Transferencia</option></select></label></div>
+                <button class="button button-primary form-submit expense-submit" type="submit">Guardar gasto <span aria-hidden="true">→</span></button>
+              </form>
+            </article>
+            <article class="panel side-info-panel expense-info"><span class="info-illustration" aria-hidden="true">−</span><h2>Ten claridad sobre tus gastos</h2><p>Clasifica cada compra o pago para saber en qué se va tu dinero.</p><div class="info-tip"><strong>Consejo</strong><span>Registra tus gastos apenas ocurran para mantener tus cifras al día.</span></div></article>
+          </div>
+          <article class="panel list-panel"><div class="panel-heading"><div><h2>Gastos registrados</h2><p>Todos tus gastos, del más reciente al más antiguo.</p></div><span class="count-pill" id="expense-total-count">0</span></div><div id="expense-list" class="table-wrap"></div></article>
+        </section>
+
+        <section class="page-view" id="page-budgets" aria-labelledby="page-title" hidden>
+          <div class="section-toolbar"><div><h2>Planifica tus gastos</h2><p>Establece un límite por categoría y mes.</p></div></div>
+          <div class="content-grid budget-content-grid">
+            <article class="panel form-panel"><div class="panel-heading"><div><h2>Crear presupuesto</h2><p>Define cuánto quieres gastar.</p></div><span class="form-symbol budget-symbol" aria-hidden="true">◎</span></div>
+              <form class="movement-form" id="budget-form">
+                <label>Categoría de gasto<select name="category" required><option value="">Seleccionar</option><option>Alimentación</option><option>Vivienda</option><option>Transporte</option><option>Salud</option><option>Educación</option><option>Servicios</option><option>Entretenimiento</option><option>Compras</option><option>Otros</option></select></label>
+                <div class="form-row"><label>Límite en guaraníes<div class="amount-input"><span>₲</span><input name="amount" type="number" min="1" step="1" inputmode="numeric" placeholder="0" required /></div></label><label>Mes<input name="month" type="month" required /></label></div>
+                <button class="button button-primary form-submit" type="submit">Guardar presupuesto <span aria-hidden="true">→</span></button>
+              </form>
+              <p class="form-footnote">Si ya existe un presupuesto para esa categoría y mes, se actualizará el límite.</p>
+            </article>
+            <article class="panel budget-help-panel"><div class="budget-help-icon" aria-hidden="true">✓</div><h2>Un plan que puedes seguir</h2><p>Compara tus gastos con el límite que estableciste y ajusta tu plan cuando lo necesites.</p><div class="budget-status-key"><span><i class="status-key-dot ok"></i>Dentro del límite</span><span><i class="status-key-dot warning"></i>Alcanzaste o superaste el límite</span></div></article>
+          </div>
+          <article class="panel list-panel"><div class="panel-heading"><div><h2>Tus presupuestos</h2><p>El avance se calcula con tus gastos registrados.</p></div><span class="count-pill" id="budget-total-count">0</span></div><div id="budget-list" class="budget-list"></div></article>
+        </section>
+
+        <section class="page-view" id="page-charts" aria-labelledby="page-title" hidden>
+          <div class="section-toolbar"><div><h2>Una mirada a tus finanzas</h2><p>Gráficos basados en los movimientos que registraste.</p></div></div>
+          <article class="panel chart-panel large-chart-panel"><div class="panel-heading"><div><h2>Ingresos y gastos por mes</h2><p>Comparación de los últimos seis meses en guaraníes.</p></div></div><div class="chart-legend"><span><i class="legend-dot legend-income"></i>Ingresos</span><span><i class="legend-dot legend-expense"></i>Gastos</span></div><div class="chart-scroll"><svg id="full-monthly-chart" class="monthly-chart large-monthly-chart" role="img" aria-label="Gráfico de ingresos y gastos por mes"></svg></div></article>
+          <div class="chart-lower-grid"><article class="panel category-chart-panel"><div class="panel-heading"><div><h2>Gastos por categoría</h2><p id="category-chart-caption">Distribución del mes seleccionado.</p></div><label class="compact-month-picker"><span class="sr-only">Mes para el gráfico de categorías</span><input id="chart-month" type="month" /></label></div><div class="category-chart-content"><div id="expense-donut" class="donut-wrap"></div><div id="expense-category-legend" class="category-legend"></div></div></article><article class="panel chart-note-panel"><div class="panel-heading"><div><h2>Tu saldo disponible</h2><p>Total acumulado registrado</p></div></div><strong class="chart-balance" id="chart-balance">₲ 0</strong><div class="balance-equation"><span><i class="legend-dot legend-income"></i>Ingresos</span><b id="chart-total-income">₲ 0</b><span><i class="legend-dot legend-expense"></i>Gastos</span><b id="chart-total-expenses">₲ 0</b></div></article></div>
+        </section>
+
+        <section class="page-view" id="page-history" aria-labelledby="page-title" hidden>
+          <div class="section-toolbar"><div><h2>Todos tus movimientos</h2><p>Filtra y consulta los ingresos y gastos registrados.</p></div><div class="history-filters"><label><span>Mes</span><input id="history-month" type="month" aria-label="Filtrar por mes" /></label><label><span>Tipo</span><select id="history-type" aria-label="Filtrar por tipo"><option value="all">Todos</option><option value="income">Ingresos</option><option value="expense">Gastos</option></select></label></div></div>
+          <article class="panel history-panel"><div class="panel-heading"><div><h2>Historial</h2><p id="history-caption">Todos los movimientos</p></div><span class="count-pill" id="history-count">0</span></div><div id="history-list" class="table-wrap"></div></article>
+        </section>
+
+        <footer class="app-footer"><span>Mi bolsillo · Prototipo académico</span><span>Los datos permanecen en este navegador.</span></footer>
+      </main>
+    </div>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </body>
+</html>
