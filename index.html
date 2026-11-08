@@ -7,10 +7,64 @@
     <meta name="description" content="Prototipo web para organizar ingresos, gastos y presupuestos personales en guaraníes." />
     <title>Mi bolsillo | Finanzas personales</title>
     <link rel="stylesheet" href="styles.css" />
+    <script src="supabase-config.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
     <script src="app.js" defer></script>
   </head>
   <body>
-    <div class="app-shell">
+    <div class="auth-shell" id="auth-shell">
+      <section class="auth-card" aria-live="polite">
+        <a class="brand auth-brand" href="#" aria-label="Mi bolsillo">
+          <span class="brand-mark" aria-hidden="true">₲</span>
+          <span class="brand-copy"><strong>mi bolsillo</strong><small>FINANZAS PERSONALES</small></span>
+        </a>
+        <div class="auth-content" id="auth-login-view">
+          <p class="auth-eyebrow">TU DINERO, EN ORDEN</p>
+          <h1>Inicia sesión</h1>
+          <p class="auth-intro">Entra a tu espacio y revisa tus finanzas.</p>
+          <form id="login-form" class="auth-form">
+            <label>Correo electrónico<input type="email" name="email" autocomplete="email" placeholder="nombre@correo.com" required /></label>
+            <label>Contraseña<input type="password" name="password" autocomplete="current-password" placeholder="Tu contraseña" required /></label>
+            <button class="button button-primary auth-submit" type="submit">Iniciar sesión</button>
+          </form>
+          <div class="auth-divider"><span>o</span></div>
+          <button class="button button-outline auth-google" type="button" data-google-signin><span class="google-g" aria-hidden="true">G</span>Continuar con Google</button>
+          <p class="auth-switch-copy">¿Todavía no tienes cuenta?</p>
+          <button class="button button-secondary auth-submit" type="button" data-auth-view="register">Registrarme</button>
+        </div>
+        <div class="auth-content" id="auth-register-view" hidden>
+          <p class="auth-eyebrow">EMPIEZA A ORGANIZARTE</p>
+          <h1>Crea tu cuenta</h1>
+          <p class="auth-intro">Solo necesitas unos datos para comenzar.</p>
+          <form id="register-form" class="auth-form">
+            <label>Nombre completo<input type="text" name="full_name" autocomplete="name" maxlength="100" placeholder="Tu nombre y apellido" required /></label>
+            <label>Correo electrónico<input type="email" name="email" autocomplete="email" placeholder="nombre@correo.com" required /></label>
+            <label>Nombre de usuario<input type="text" name="username" autocomplete="username" minlength="3" maxlength="24" pattern="[A-Za-z0-9._-]{3,24}" placeholder="ej. nestor_01" required /><small class="field-hint">De 3 a 24 caracteres: letras, números, punto, guion o guion bajo.</small></label>
+            <label>Contraseña<input type="password" name="password" autocomplete="new-password" minlength="8" placeholder="Mínimo 8 caracteres" required /></label>
+            <button class="button button-primary auth-submit" type="submit">Crear cuenta</button>
+          </form>
+          <div class="auth-divider"><span>o regístrate con</span></div>
+          <button class="button button-outline auth-google" type="button" data-google-signin><span class="google-g" aria-hidden="true">G</span>Continuar con Google</button>
+          <p class="auth-switch-copy">¿Ya tienes cuenta?</p>
+          <button class="button button-secondary auth-submit" type="button" data-auth-view="login">Iniciar sesión</button>
+        </div>
+        <div class="auth-content" id="auth-balance-view" hidden>
+          <p class="auth-eyebrow">UN BUEN PUNTO DE PARTIDA</p>
+          <h1>¿Con cuánto empiezas?</h1>
+          <p class="auth-intro">Ingresa el saldo que tienes hoy. Lo usaremos para calcular tu disponible junto con tus futuros movimientos.</p>
+          <form id="balance-form" class="auth-form">
+            <label id="setup-username-label">Nombre de usuario<input type="text" name="username" autocomplete="username" minlength="3" maxlength="24" pattern="[A-Za-z0-9._-]{3,24}" placeholder="ej. nestor_01" required /><small class="field-hint">De 3 a 24 caracteres: letras, números, punto, guion o guion bajo.</small></label>
+            <label>Saldo inicial en guaraníes<div class="amount-input"><span>₲</span><input name="opening_balance" type="number" min="0" step="1" inputmode="numeric" placeholder="0" required /></div></label>
+            <button class="button button-primary auth-submit" type="submit">Guardar y entrar</button>
+          </form>
+        </div>
+        <div class="auth-notice" id="auth-notice" role="status" aria-live="polite" hidden></div>
+        <div class="auth-setup-warning" id="auth-setup-warning" hidden><strong>Falta conectar la base de datos.</strong><span>Configura el proyecto Supabase en <code>supabase-config.js</code> y aplica <code>supabase/schema.sql</code>.</span></div>
+        <p class="auth-privacy"><span class="status-dot"></span> Tu cuenta mantiene tus datos sincronizados y separados.</p>
+      </section>
+    </div>
+
+    <div class="app-shell" id="app-shell" hidden>
       <aside class="sidebar" aria-label="Navegación principal">
         <a class="brand" href="#inicio" data-nav="dashboard" aria-label="Mi bolsillo, inicio">
           <span class="brand-mark" aria-hidden="true">₲</span>
@@ -43,7 +97,7 @@
             <span>Historial</span>
           </button>
         </nav>
-        <div class="sidebar-note"><span class="note-dot"></span><span>Tu información se guarda en este navegador.</span></div>
+        <div class="sidebar-note"><span class="note-dot"></span><span>Tu información se sincroniza con tu cuenta.</span></div>
       </aside>
 
       <main class="main-area">
@@ -54,7 +108,8 @@
             <p class="page-subtitle" id="page-subtitle">Un resumen claro para tomar mejores decisiones.</p>
           </div>
           <div class="topbar-right">
-            <span class="today-chip"><span class="status-dot"></span> Prototipo local</span>
+            <span class="today-chip"><span class="status-dot"></span> Cuenta conectada</span>
+            <div class="account-control"><span class="account-avatar" id="account-avatar">N</span><span class="account-name" id="account-name">Cuenta</span><button class="button button-outline sign-out-button" id="sign-out" type="button">Salir</button></div>
             <button class="button button-primary top-action" id="header-action" type="button" hidden>
               <span aria-hidden="true">＋</span><span id="header-action-label">Registrar</span>
             </button>
@@ -70,8 +125,8 @@
           <div class="summary-grid">
             <article class="summary-card income-card"><div class="summary-top"><span>Ingresos del mes</span><span class="metric-icon income-icon" aria-hidden="true">↗</span></div><strong id="summary-income">₲ 0</strong><small id="summary-income-count">0 movimientos</small></article>
             <article class="summary-card expense-card"><div class="summary-top"><span>Gastos del mes</span><span class="metric-icon expense-icon" aria-hidden="true">↘</span></div><strong id="summary-expenses">₲ 0</strong><small id="summary-expense-count">0 movimientos</small></article>
-            <article class="summary-card balance-card"><div class="summary-top"><span>Saldo disponible</span><span class="metric-icon balance-icon" aria-hidden="true">₲</span></div><strong id="summary-balance">₲ 0</strong><small>Ingresos menos gastos registrados</small></article>
-            <article class="summary-card budget-card"><div class="summary-top"><span>Presupuestos del mes</span><span class="metric-icon budget-icon" aria-hidden="true">◎</span></div><strong id="summary-budget-count">0</strong><small id="summary-budget-caption">límites establecidos</small></article>
+            <article class="summary-card balance-card"><div class="summary-top"><span>Saldo disponible</span><span class="metric-icon balance-icon" aria-hidden="true">₲</span></div><strong id="summary-balance">₲ 0</strong><small>Saldo inicial + ingresos − gastos</small></article>
+            <article class="summary-card budget-card"><div class="summary-top"><span>Saldo inicial</span><span class="metric-icon budget-icon" aria-hidden="true">₲</span></div><strong id="summary-opening-balance">₲ 0</strong><small>Saldo con el que empezaste</small></article>
           </div>
 
           <div class="dashboard-grid">
@@ -141,7 +196,7 @@
         <section class="page-view" id="page-charts" aria-labelledby="page-title" hidden>
           <div class="section-toolbar"><div><h2>Una mirada a tus finanzas</h2><p>Gráficos basados en los movimientos que registraste.</p></div></div>
           <article class="panel chart-panel large-chart-panel"><div class="panel-heading"><div><h2>Ingresos y gastos por mes</h2><p>Comparación de los últimos seis meses en guaraníes.</p></div></div><div class="chart-legend"><span><i class="legend-dot legend-income"></i>Ingresos</span><span><i class="legend-dot legend-expense"></i>Gastos</span></div><div class="chart-scroll"><svg id="full-monthly-chart" class="monthly-chart large-monthly-chart" role="img" aria-label="Gráfico de ingresos y gastos por mes"></svg></div></article>
-          <div class="chart-lower-grid"><article class="panel category-chart-panel"><div class="panel-heading"><div><h2>Gastos por categoría</h2><p id="category-chart-caption">Distribución del mes seleccionado.</p></div><label class="compact-month-picker"><span class="sr-only">Mes para el gráfico de categorías</span><input id="chart-month" type="month" /></label></div><div class="category-chart-content"><div id="expense-donut" class="donut-wrap"></div><div id="expense-category-legend" class="category-legend"></div></div></article><article class="panel chart-note-panel"><div class="panel-heading"><div><h2>Tu saldo disponible</h2><p>Total acumulado registrado</p></div></div><strong class="chart-balance" id="chart-balance">₲ 0</strong><div class="balance-equation"><span><i class="legend-dot legend-income"></i>Ingresos</span><b id="chart-total-income">₲ 0</b><span><i class="legend-dot legend-expense"></i>Gastos</span><b id="chart-total-expenses">₲ 0</b></div></article></div>
+          <div class="chart-lower-grid"><article class="panel category-chart-panel"><div class="panel-heading"><div><h2>Gastos por categoría</h2><p id="category-chart-caption">Distribución del mes seleccionado.</p></div><label class="compact-month-picker"><span class="sr-only">Mes para el gráfico de categorías</span><input id="chart-month" type="month" /></label></div><div class="category-chart-content"><div id="expense-donut" class="donut-wrap"></div><div id="expense-category-legend" class="category-legend"></div></div></article><article class="panel chart-note-panel"><div class="panel-heading"><div><h2>Tu saldo disponible</h2><p>Saldo inicial + ingresos − gastos</p></div></div><strong class="chart-balance" id="chart-balance">₲ 0</strong><div class="balance-equation"><span>Saldo inicial</span><b id="chart-opening-balance">₲ 0</b><span><i class="legend-dot legend-income"></i>Ingresos</span><b id="chart-total-income">₲ 0</b><span><i class="legend-dot legend-expense"></i>Gastos</span><b id="chart-total-expenses">₲ 0</b></div></article></div>
         </section>
 
         <section class="page-view" id="page-history" aria-labelledby="page-title" hidden>
@@ -149,7 +204,7 @@
           <article class="panel history-panel"><div class="panel-heading"><div><h2>Historial</h2><p id="history-caption">Todos los movimientos</p></div><span class="count-pill" id="history-count">0</span></div><div id="history-list" class="table-wrap"></div></article>
         </section>
 
-        <footer class="app-footer"><span>Mi bolsillo · Prototipo académico</span><span>Los datos permanecen en este navegador.</span></footer>
+        <footer class="app-footer"><span>Mi bolsillo · Prototipo académico</span><span>Datos sincronizados con tu cuenta.</span></footer>
       </main>
     </div>
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
